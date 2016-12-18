@@ -1,19 +1,53 @@
-var Evernote = require('evernote');
-var client = new Evernote.Client({
+let Evernote = require('evernote');
+let client = new Evernote.Client({
   token: 'S=s1:U=9331f:E=160683e7e51:C=159108d5170:P=1cd:A=en-devtoken:V=2:H=927a3d88ba010a659f8dbf6905f291a9',
   sandbox: true,
   china: true
 });
 
+let noteStore = client.getNoteStore();
+// 获取笔记本列表
+noteStore.listNotebooks().then(function(notebooks) {
+  // notebooks is the list of Notebook objects
+  // console.log(notebooks);
+  // 获取笔记列表
+  // https://dev.yinxiang.com/doc/reference/NoteStore.html#Struct_NotesMetadataResultSpec
+  notebooks.forEach(notebook => {
+    noteStore.findNotesMetadata({
+      notebookGuid: notebook.guid
+    }, 0, 100, {
+      includeTitle: true,
+      includeContentLength: true,
+      includeCreated: true,
+      // includeUpdated: true,
+      // includeDeleted: true,
+      // includeUpdateSequenceNum: true,
+      // includeNotebookGuid: true,
+      includeTagGuids: true,
+      includeAttributes: true,
+      // includeLargestResourceMime: true,
+      // includeLargestResourceSize: true
+    }).then(notes => {
+      console.log(notes);
+    }).catch(err => {
+      console.log(err);
+    })
+  })
+})
+.catch(err => {
+  console.log('获取笔记本列表失败', err);
+});
+
+
 // 创建笔记函数
 function makeNote(noteStore, noteTitle, noteBody, parentNotebook, callback) {
  
-  var nBody = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
+  let nBody = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
   nBody += "<!DOCTYPE en-note SYSTEM \"http://xml.evernote.com/pub/enml2.dtd\">";
   nBody += "<en-note>" + noteBody + "</en-note>";
   // Create note object
-  // var ourNote = new Evernote.Note();
-  var ourNote = {};
+  // let ourNote = new Evernote.Note();
+  let ourNote = {};
   ourNote.title = noteTitle;
   ourNote.content = nBody;
  
@@ -27,7 +61,7 @@ function makeNote(noteStore, noteTitle, noteBody, parentNotebook, callback) {
 }
 
 // 调用创建笔记函数
-var noteStore = client.getNoteStore();
-makeNote(noteStore, 'node测试创建笔记', '这是一篇使用 node 创建的笔记', null, note => {
-  console.log(note)
-})
+
+module.exports = function createNote(title, content) {
+  makeNote(noteStore, title, content);
+}
