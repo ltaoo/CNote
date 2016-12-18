@@ -4,12 +4,30 @@ var client = new Evernote.Client({
   sandbox: true,
   china: true
 });
-// 然后获取用户信息
-var userStore = client.getUserStore();
-userStore.getUser().then(function(user) {
-  // user is the returned User object
-  console.log(user)
+
+// 创建笔记函数
+function makeNote(noteStore, noteTitle, noteBody, parentNotebook, callback) {
+ 
+  var nBody = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
+  nBody += "<!DOCTYPE en-note SYSTEM \"http://xml.evernote.com/pub/enml2.dtd\">";
+  nBody += "<en-note>" + noteBody + "</en-note>";
+  // Create note object
+  // var ourNote = new Evernote.Note();
+  var ourNote = {};
+  ourNote.title = noteTitle;
+  ourNote.content = nBody;
+ 
+  // parentNotebook is optional; if omitted, default notebook is used
+  if (parentNotebook && parentNotebook.guid) {
+    ourNote.notebookGuid = parentNotebook.guid;
+  }
+ 
+  // Attempt to create note in Evernote account
+  noteStore.createNote(ourNote);
+}
+
+// 调用创建笔记函数
+var noteStore = client.getNoteStore();
+makeNote(noteStore, 'node测试创建笔记', '这是一篇使用 node 创建的笔记', null, note => {
+  console.log(note)
 })
-.catch(err => {
-  console.log(err);
-});
