@@ -30,7 +30,15 @@ var req = http.request(options, function (res) {
 ```
 
 ## 为知笔记
-
+api http://www.wiz.cn/manual/plugin/
 直接对为知笔记保存在本地的 ziw 进行处理。
 
 - 提取笔记内容
+
+## 笔记间的互相导入
+
+首先要了解不同的笔记接收什么格式的笔记导入。
+
+### 印象笔记
+
+带行内样式的 html 文档。
