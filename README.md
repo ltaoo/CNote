@@ -2,12 +2,18 @@
 
 ## 印象笔记
 
-- 创建笔记
-- 查看笔记本
+- 创建笔记 
+createNote.js
+- 创建笔记本 
+createNotebook.js
+- 获取笔记本列表
+evernoteList.js
 - 获取笔记列表
+evernoteList.js
 - 获取笔记内容
+evernoteList.js
 
-在解析过程中发现笔记内容过多会报错。。。修改一些源码
+> 在获取笔记内容过程中发现笔记内容过多会报错。。。修改一些源码
 ```javascript
 // node_modules/evernote/lib/thrift/transport/binaryHttpTransport.js
 // 75 行附近
@@ -30,15 +36,54 @@ var req = http.request(options, function (res) {
 ```
 
 ## 为知笔记
-api http://www.wiz.cn/manual/plugin/
-直接对为知笔记保存在本地的 ziw 进行处理。
+api http://www.wiz.cn/manual/plugin/ 
+通过插件`Hello.World`文件夹获取笔记信息。
 
-- 提取笔记内容
+### 获取当前选择的笔记对象
+```javascript
+var objApp = WizExplorerApp;
+// 获取到窗口
+var objWindow = objApp.Window;
+var objDocuments = objWindow.DocumentsCtrl.SelectedDocuments;
+if (objDocuments && objDocuments.Count >= 1) {
+    // 如果有选中的文档，就拿到第一个
+    var objDoc = objDocuments.Item(0);
+} else {
+  // 没有选择笔记
+}
+```
 
-## 笔记间的互相导入
+### 获取笔记标题
+```javascript
+var title = objDoc.Title;
+```
 
-首先要了解不同的笔记接收什么格式的笔记导入。
+### 获取笔记内容
+获取的是纯文本内容，不含 html 标签。
+```javascript
+var content = objDoc.GetText(0);
+```
 
-### 印象笔记
+### 获取笔记创建时间
+```javascript
+var createTime = objDoc.DateCreated;
+```
 
-带行内样式的 html 文档。
+### 获取笔记标签
+```javascript
+var tags = objDoc.Tags;
+// 遍历
+var tagsCount = tags.Count;
+var tagsAry = [];
+for(var i = 0; i < tagsCount; i++) {
+  //
+
+  tagsAry.push(tags.Item(i).Name);
+}
+alert(JSON.stringify(tagsAry));
+```
+
+### 获取笔记所在文件夹
+```javascript
+var notebook = objDoc.Parent.Name;
+```

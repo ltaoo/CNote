@@ -10,7 +10,7 @@ let noteStore = client.getNoteStore();
 
 // 创建笔记函数
 function makeNote(noteStore, note, callback) {
-  const {noteTitle, noteBody, parentNotebook, created} = note;
+  const {noteTitle, noteBody, parentNotebook, created, tagNames} = note;
   let nBody = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
   nBody += "<!DOCTYPE en-note SYSTEM \"http://xml.evernote.com/pub/enml2.dtd\">";
   nBody += "<en-note>" + noteBody + "</en-note>";
@@ -21,6 +21,8 @@ function makeNote(noteStore, note, callback) {
   ourNote.content = nBody;
   // 创建时间
   ourNote.created = created || new Date().getTime();
+  // 标签
+  ourNote.tagNames = tagNames;
  
   // parentNotebook is optional; if omitted, default notebook is used
   if (parentNotebook && parentNotebook.guid) {
@@ -30,7 +32,10 @@ function makeNote(noteStore, note, callback) {
   // Attempt to create note in Evernote account
   noteStore.createNote(ourNote)
     .then(note => {
-      console.log(note);
+      // console.log(note);
+      if(note.title === noteTitle) {
+        console.log('笔记创建成功');
+      }
     })
     .catch(err => {
       console.log(err);
