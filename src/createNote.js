@@ -1,15 +1,11 @@
-let Evernote = require('evernote');
-var TextDecoder = require('text-encoding').TextDecoder;
-let client = new Evernote.Client({
-  token: 'S=s1:U=9331f:E=160683e7e51:C=159108d5170:P=1cd:A=en-devtoken:V=2:H=927a3d88ba010a659f8dbf6905f291a9',
-  sandbox: true,
-  china: true
-});
+const client = require('./config');
+const fs = require('fs');
+const path = require('path');
 
 let noteStore = client.getNoteStore();
 
 // 创建笔记函数
-function makeNote(noteStore, note, callback) {
+function makeNote(note) {
   const {noteTitle, noteBody, parentNotebook, created, tagNames} = note;
   let nBody = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
   nBody += "<!DOCTYPE en-note SYSTEM \"http://xml.evernote.com/pub/enml2.dtd\">";
@@ -33,17 +29,22 @@ function makeNote(noteStore, note, callback) {
   noteStore.createNote(ourNote)
     .then(note => {
       // console.log(note);
-      if(note.title === noteTitle) {
-        console.log('笔记创建成功');
-      }
+      console.log('创建笔记', note.title, '成功');
     })
     .catch(err => {
       console.log(err);
     })
 }
 
-// 调用创建笔记函数
-
-module.exports = function createNote(note) {
-  makeNote(noteStore, note);
+function createNote(title) {
+  // 获取到内容
+  let noteBody = fs.readFileSync(path.join(__dirname, '../note', title + '.md'));
+  // 然后就可以新建笔记了
+  makeNote({
+    noteTitle: title.trim(),
+    noteBody
+  });
 }
+
+// 导出
+module.exports = createNote;

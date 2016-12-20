@@ -1,5 +1,37 @@
 # 笔记应用 api 分析
 
+
+## 使用方式
+
+```bash
+git clone https://github.com/ltaoo/noteApplicationApi.git
+```
+
+安装依赖
+```bash
+npm i
+```
+
+链接到全局
+```bash
+npm link
+```
+
+[申请 token ](https://sandbox.evernote.com/api/DeveloperToken.action) 后替换`src/config.js`对应字段。
+
+
+### 新建笔记
+
+在`note`文件夹下新建一篇`.md`后缀笔记
+```bash
+note create <name>
+```
+> name 不需要后缀。
+
+就可以在印象笔记看到对应的笔记了。
+
+
+
 ## 印象笔记
 
 - 创建笔记 
