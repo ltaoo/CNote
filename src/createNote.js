@@ -1,8 +1,8 @@
-const client = require('./config');
+const config = require('./config');
 const fs = require('fs');
 const path = require('path');
 
-let noteStore = client.getNoteStore();
+let noteStore = config.noteStore;
 
 // 创建笔记函数
 function makeNote(note) {

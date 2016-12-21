@@ -9,4 +9,14 @@ let client = new Evernote.Client({
   china: true
 });
 
-module.exports = client;
+// 数据库
+const path = require('path');
+const low = require('lowdb');
+const db = low(path.join(__dirname, './note.json'));
+
+module.exports = {
+	db,
+	client,
+	noteStore: client.getNoteStore(),
+	userStore: client.getUserStore()
+};
