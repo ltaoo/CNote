@@ -38,7 +38,7 @@ function makeNote(note) {
 
 function createNote(title) {
   // 获取到内容
-  let noteBody = fs.readFileSync(path.join(__dirname, '../note', title + '.md'));
+  let noteBody = fs.readFileSync(path.join(__dirname, '../note', title));
   // 然后就可以新建笔记了
   makeNote({
     noteTitle: title.trim(),

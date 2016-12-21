@@ -23,8 +23,8 @@ program
   });
 
 program
-	.command('download')
-	.description('从印象笔记下载笔记')
+	.command('init')
+	.description('初始化本地数据')
 	.action(() => {
 		Evernote.fetchNotebookList();
 	})

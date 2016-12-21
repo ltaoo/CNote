@@ -24,14 +24,14 @@ function fetchNotebooks() {
 function createNotebookDir(notebook) {
 	// 根据笔记本创建文件夹
 	const dir = path.join(__dirname, '../note', notebook.name)
-	// if(fs.existsSync(dir)) {
-	// 	console.log(notebook.name, '已经存在');
-	// 	continue;
-	// }
+		// if(fs.existsSync(dir)) {
+		// 	console.log(notebook.name, '已经存在');
+		// 	continue;
+		// }
 	try {
 		fs.mkdirSync(dir);
 		console.log(notebook.name, '创建成功');
-	}catch(err) {
+	} catch (err) {
 		console.log(err);
 	}
 }
@@ -40,21 +40,38 @@ function fetchNotebookList() {
 	fetchNotebooks()
 		.then(notebooks => {
 			// 判断是否已经存在于数据库内
-			for(let i = 0, len = notebooks.length; i < len; i++) {
+			for (let i = 0, len = notebooks.length; i < len; i++) {
 				const notebook = notebooks[i];
-				const result = db.get('notebooks').find({guid: notebook.guid}).value();
-				if(result) {
+				const result = db.get('notebooks').find({
+					guid: notebook.guid
+				}).value();
+				if (result) {
 					// 如果这个笔记本已经存在了
 					console.log(notebook.name, '已经存在');
 					continue;
 				}
 				// 写入数据库
-				let oldNotebook = db.getState('notebooks').notebooks;
-				let newNotebook = oldNotebook.push(notebook);
+				// 如果表不存在，就初始化
+				if (!db.has('notebooks').value()) {
+					db.set('notebooks', []).value()
+				}
+				// let oldNotebook = db.getState('notebooks').notebooks;
 				// console.log(oldNotebook);
-				db.setState({
-					notebooks
-				});
+				// return;
+				db.get('notebooks')
+					.push(Object.assign({}, {
+						// 笔记本唯一 id
+						"guid": notebook.guid,
+						// 笔记本名
+						"name": notebook.name,
+						// 是否是默认笔记本
+						"defaultNotebook": notebook.defaultNotebook,
+						// 笔记本创建时间？
+						"serviceCreated": notebook.serviceCreated,
+						// 服务端更新时间？
+						"serviceUpdated": notebook.serviceUpdated
+					}))
+					.value();
 				createNotebookDir(notebook);
 			}
 		})
@@ -64,3 +81,5 @@ function fetchNotebookList() {
 }
 
 module.exports = fetchNotebookList;
+
+fetchNotebookList();
