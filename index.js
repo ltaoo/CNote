@@ -20,7 +20,15 @@ program
   .action((name)=> {
     //
     Evernote.createNote(name);
-  })
+  });
+
+program
+	.command('download')
+	.description('从印象笔记下载笔记')
+	.action(() => {
+		Evernote.fetchNotebookList();
+	})
+
 
 program.parse(process.argv);
 
