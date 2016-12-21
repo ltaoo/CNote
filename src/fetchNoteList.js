@@ -6,6 +6,9 @@ const cheerio = require('cheerio');
 let noteStore = config.noteStore;
 const db = config.db;
 
+// 工具方法
+const lib = require('./lib');
+
 // 获取笔记列表
 function _fetchNote() {
     return new Promise((resolve, reject) => {
@@ -123,7 +126,7 @@ function fetchNote() {
                 let notebook = db.get('notebooks').find({guid: note.notebookGuid}).value();
                 // console.log(notebook.name);
                 try {
-                    fs.writeFileSync(path.join(__dirname, '../note/', notebook.name, note.title), _getContent(note.content), 'utf8');
+                    fs.writeFileSync(path.join(__dirname, '../note/', notebook.name, note.title), lib.getContent(note.content), 'utf8');
                     // 将笔记列表写入数据库
                     db.get('notes')
                         .push(Object.assign({}, {
@@ -148,14 +151,6 @@ function fetchNote() {
         })
 }
 
-function _getContent (xml) {
-    // 从印象笔记的 en-note 标签内获取真正的内容
-    let $ = cheerio.load(xml);
-    let body = $("en-note");
-    // console.log(body);
-    // ok 能够正常获取到
-    let note = body['0'].children[0];
-    return note.data;
-}
+module.exports = fetchNote;
 
 fetchNote();

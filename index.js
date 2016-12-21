@@ -26,7 +26,22 @@ program
 	.command('init')
 	.description('初始化本地数据')
 	.action(() => {
-		Evernote.fetchNotebookList();
+        // 如果是初始化，表示是重新来，所以先将所有文件删除掉，包括数据库。
+        // delete all file
+		Evernote.fetchNotebookList()
+            .then(res => {
+                // 如果笔记本对应的文件夹都创建好了，就可以去获取笔记了
+                return Evernote.fetchNoteList();
+            })
+            .catch(err => {
+                console.log(err);
+            })
+            .then(res => {
+                console.log('初始化成功！');
+            })
+            .catch(err => {
+                console.log(err);
+            })
 	})
 
 

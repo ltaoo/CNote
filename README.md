@@ -19,6 +19,13 @@ npm link
 
 [申请 token ](https://sandbox.evernote.com/api/DeveloperToken.action) 后替换`src/config.js`对应字段。
 
+### 初始化
+
+```bash
+note init
+```
+
+从印象笔记下载笔记到本地，生成对应的笔记文件。
 
 ### 新建笔记
 
