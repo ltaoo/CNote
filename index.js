@@ -17,9 +17,9 @@ program
 program
   .command('create <file>')
   .description('新建笔记到印象笔记')
-  .action((name)=> {
+  .action((path)=> {
     //
-    Evernote.createNote(name);
+    Evernote.createNote(path);
   });
 
 program

@@ -38,11 +38,16 @@ note create <name>
 
 就可以在印象笔记看到对应的笔记了，会生成对应的笔记本。
 
+```bash
+note create example/example.md
+```
+如果`example`笔记本不存在，会先创建笔记本，再创建`example.md`笔记。
+
 #### 标签
 
 ```
 # 欢迎使用 evernote
-[tag1|tag2|tag3]
+@[tag1|tag2|tag3]
 ```
 
 将会在印象笔记生成`tag1`、`tag2`和`tag3`标签。

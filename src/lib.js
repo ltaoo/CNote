@@ -8,7 +8,7 @@ module.exports = {
         // console.log(body);
         // ok 能够正常获取到
         let note = body['0'].children[0];
-        console.log(body);
+        // console.log(body);
         return note.data;
     },
     getTags(source, md) {
@@ -35,9 +35,8 @@ module.exports = {
             }
             let reg = new RegExp('@\\[(.+?)\\]',"g");
             source = source.replace(reg, '');
-            return {tagNames, source} 
         }
-
+        return {tagNames, source} 
     }
 }
 
