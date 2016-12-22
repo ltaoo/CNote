@@ -109,7 +109,7 @@ function createNote(title) {
           .push(Object.assign({}, {
               guid: note.guid,
               title: note.title,
-              content: note.content,
+              // content: note.content,
               notebookGuid: note.notebookGuid,
               created: note.created,
               updated: note.updated,
@@ -129,12 +129,12 @@ function createNote(title) {
       parentNotebook: notebook
     })
     .then(note => {
-      console.log(`创建笔记 ${note.title} 成功`);
+      console.log(`笔记 “${note.title}” 创建成功`);
       db.get('notes')
         .push(Object.assign({}, {
             guid: note.guid,
             title: note.title,
-            content: note.content,
+            // content: note.content,
             notebookGuid: note.notebookGuid,
             created: note.created,
             updated: note.updated,
@@ -144,7 +144,7 @@ function createNote(title) {
         .value();
     })
     .catch(err => {
-      console.log(`创建${note.title}失败`);
+      console.log(`笔记创建失败`);
     })
   }
 }

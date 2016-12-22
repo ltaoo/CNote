@@ -52,6 +52,13 @@ note create example/example.md
 
 将会在印象笔记生成`tag1`、`tag2`和`tag3`标签。
 
+### 更新笔记
+```bash
+note update <name>
+```
+
+将会更新笔记。
+> 暂时无法更新笔记名与移动笔记。
 
 
 ## 印象笔记

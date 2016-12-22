@@ -22,6 +22,15 @@ program
     Evernote.createNote(path);
   });
 
+
+// 更新指定笔记
+program
+    .command('update <file>')
+    .description('更新指定笔记')
+    .action(path => {
+        Evernote.updateNote(path);
+    });
+
 program
 	.command('init')
 	.description('初始化本地数据')
@@ -42,8 +51,16 @@ program
             .catch(err => {
                 console.log(err);
             })
-	})
+	});
 
+
+
+program
+    .command('push')
+    .description('将所有修改提交至印象笔记，类似 git 的 push')
+    .action(() => {
+        // 遍历文件夹，比对，性能很有问题。。。
+    })
 
 program.parse(process.argv);
 
