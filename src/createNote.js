@@ -6,6 +6,8 @@ const MarkdownIt = require('markdown-it'),
 
 const juice = require('juice');
 
+const lib = require('./lib');
+
 let noteStore = config.noteStore;
 
 // 创建笔记函数
@@ -49,16 +51,22 @@ function _makeNote(note) {
 function createNote(title) {
   // 获取到内容
   let source = fs.readFileSync(path.join(__dirname, '../note', title), 'utf8');
+  // 解析 标签
+  let tokens = md.parse(source, {});
+  let result = lib.getTags(source, md);
   // 渲染 markdown
-  let html = md.render(source);
+  let html = md.render(result.source);
+  // 读取样式
   let style = fs.readFileSync(path.join(__dirname, './themes', 'github_markdown.css'), 'utf8');
+  // 插入行内样式
   let content = juice.inlineContent(html, style);
   // console.log(content);
   // return;
   // 然后就可以新建笔记了
   _makeNote({
     noteTitle: title.trim(),
-    noteBody: content
+    noteBody: content,
+    tagNames: result.tagNames
   });
 }
 

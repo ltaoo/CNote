@@ -153,4 +153,4 @@ function fetchNote() {
 
 module.exports = fetchNote;
 
-fetchNote();
+// fetchNote();
