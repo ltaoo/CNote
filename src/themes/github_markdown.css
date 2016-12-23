@@ -574,3 +574,7 @@ kbd {
 hr {
   border-bottom-color: #eee;
 }
+
+var {
+  display: none;
+}

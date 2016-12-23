@@ -12,7 +12,7 @@ let client = new Evernote.Client({
 // 数据库
 const path = require('path');
 const low = require('lowdb');
-const db = low(path.join(__dirname, './note.json'));
+const db = low(path.join(__dirname, '../note', 'db.json'));
 
 module.exports = {
 	db,

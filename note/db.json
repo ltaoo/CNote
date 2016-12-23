@@ -1,0 +1,13 @@
+{
+  "notebooks": [
+    {
+      "guid": "1af06d6a-0413-4c46-80e8-88a6fbce6792",
+      "name": "我的第一个笔记本",
+      "defaultNotebook": true,
+      "serviceCreated": 1482036442000,
+      "serviceUpdated": 1482483478000,
+      "totalNotes": 0
+    }
+  ],
+  "notes": []
+}

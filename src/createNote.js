@@ -71,12 +71,14 @@ function createNote(title) {
   }
   // 获取到内容
   let source = fs.readFileSync(path.join(__dirname, '../note', notebookName, noteName), 'utf8');
-  console.log(source);
+  // console.log(source);
   // 解析 标签
   let result = lib.getTags(source, md);
   // console.log(result);
   // 渲染 markdown
   let html = md.render(result.source);
+  html += `<var>${source}</var>`;
+  console.log(html);
   // 读取样式
   let style = fs.readFileSync(path.join(__dirname, './themes', 'github_markdown.css'), 'utf8');
   // 插入行内样式
@@ -142,9 +144,11 @@ function createNote(title) {
             tagGuids: note.tagGuids
         }))
         .value();
+      // 将数据库同步至印象笔记
+      
     })
     .catch(err => {
-      console.log(`笔记创建失败`);
+      console.log(err);
     })
   }
 }

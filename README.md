@@ -19,10 +19,17 @@ npm link
 
 [申请 token ](https://sandbox.evernote.com/api/DeveloperToken.action) 后替换`src/config.js`对应字段。
 
-### 初始化
+### 1、初始化
 
 ```bash
 note init
+```
+
+生成保存笔记的文件夹`note`和数据库文件`db.json`。
+
+### 2、同步
+```bash
+note clone
 ```
 
 从印象笔记下载笔记到本地，生成对应的笔记文件。

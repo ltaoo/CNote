@@ -24,16 +24,20 @@ program
 
 
 // 更新指定笔记
-program
-    .command('update <file>')
+program.command('update <file>')
     .description('更新指定笔记')
     .action(path => {
         Evernote.updateNote(path);
     });
 
-program
-	.command('init')
-	.description('初始化本地数据')
+program.command('init')
+  .description('初始化应用，初始化后如需要同步印象笔记，使用 clone')
+  .action(() => {
+    // 初始化就是在本地初始化 note 文件夹和 db.json 数据库
+  })
+
+program.command('clone')
+	.description('第一次使用时执行，从印象笔记获取所有笔记')
 	.action(() => {
         // 如果是初始化，表示是重新来，所以先将所有文件删除掉，包括数据库。
         // delete all file
@@ -61,6 +65,14 @@ program
     .action(() => {
         // 遍历文件夹，比对，性能很有问题。。。
     })
+
+
+program.command('pull')
+  .description('从印象笔记拉取更新，类似 git 的 pull')
+  .action(() => {
+    // 从印象笔记下载指定笔记
+
+  })
 
 program.parse(process.argv);
 

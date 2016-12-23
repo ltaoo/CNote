@@ -3,16 +3,30 @@ const fs =require('fs');
 const path = require('path');
 
 module.exports = {
+    // 将本地数据库提交至印象笔记
+    updateDb() {
+        
+    },
+    // 从印象笔记获取实时更新的数据库
+    fetchDb() {
+
+    },
     // 提取印象笔记正文
     getContent(xml) {
         // 从印象笔记的 en-note 标签内获取真正的内容
         let $ = cheerio.load(xml);
         let body = $("en-note");
+        // 判断是否是 md 笔记，如果是才 load ，不是就直接获取内容
         // console.log(body);
         // ok 能够正常获取到
-        let note = body['0'].children[0];
         // console.log(body);
-        return note.data;
+        let len = body['0'].children.length;
+        let note = body['0'].children[len-1];
+        // console.log(note);
+        if(note.name === 'var') {
+            return note.children[0].data;
+        }
+        return undefined;
     },
     getTags(source, md) {
         let tokens = md.parse(source, {});
