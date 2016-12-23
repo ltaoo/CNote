@@ -11,48 +11,7 @@ const db = config.db;
 
 let noteStore = config.noteStore;
 
-// 更新笔记
-function _updateNote(note) {
-    return new Promise((resolve, reject) => {
-        const {
-            guid,
-            noteTitle,
-            noteBody,
-            parentNotebook,
-            created,
-            tagNames
-        } = note;
-        // console.log(guid)
-        let nBody = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
-        nBody += "<!DOCTYPE en-note SYSTEM \"http://xml.evernote.com/pub/enml2.dtd\">";
-        nBody += "<en-note>" + noteBody + "</en-note>";
-        // Create note object
-        // let ourNote = new Evernote.Note();
-        let ourNote = {};
-        ourNote.title = noteTitle;
-        ourNote.content = nBody;
-        // 创建时间
-        ourNote.created = created || new Date().getTime();
-        // 标签
-        ourNote.tagNames = tagNames;
-        // guid
-        ourNote.guid = guid;
-        // parentNotebook is optional; if omitted, default notebook is used
-        if (parentNotebook && parentNotebook.guid) {
-            ourNote.notebookGuid = parentNotebook.guid;
-        }
-
-        // Attempt to create note in Evernote account
-        noteStore.updateNote(ourNote)
-            .then(note => {
-                // console.log(note);
-                resolve(note);
-            })
-            .catch(err => {
-                reject(err);
-            })
-    })
-}
+const _updateNote = require('./api')._updateNote;
 
 function updateNote(title) {
     let _result = lib.noteExists(title);

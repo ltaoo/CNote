@@ -9,10 +9,14 @@ const updateNote = require('./updateNote');
 const fetchNotebookList = require('./fetchNotebookList');
 // 获取所有笔记并在本地创建对应文件
 const fetchNoteList = require('./fetchNoteList');
+
+// 获取数据库
+const fetchDb = require('./fetchDb');
 module.exports = {
   createNote,
   updateNote,
   createNotebook,
   fetchNotebookList,
-  fetchNoteList
+  fetchNoteList,
+  fetchDb
 };

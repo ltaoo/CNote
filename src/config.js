@@ -18,5 +18,9 @@ module.exports = {
 	db,
 	client,
 	noteStore: client.getNoteStore(),
-	userStore: client.getUserStore()
+	userStore: client.getUserStore(),
+  // 笔记目录
+  root: path.join(__dirname, '../note'),
+  dbName: 'db.json',
+  appName: 'CNote'
 };

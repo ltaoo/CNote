@@ -126,21 +126,23 @@ function fetchNote() {
                 let notebook = db.get('notebooks').find({guid: note.notebookGuid}).value();
                 // console.log(notebook.name);
                 try {
-                    fs.writeFileSync(path.join(__dirname, '../note/', notebook.name, note.title), lib.getContent(note.content), 'utf8');
-                    // 将笔记列表写入数据库
-                    db.get('notes')
-                        .push(Object.assign({}, {
-                            guid: note.guid,
-                            title: note.title,
-                            content: note.content,
-                            notebookGuid: note.notebookGuid,
-                            created: note.created,
-                            updated: note.updated,
-                            deleted: note.deleted,
-                            tagGuids: note.tagGuids
-                        }))
-                        .value();
-                    console.log('笔记', note.title, '创建成功');
+                    if(note.title !== 'db.json') {
+                        fs.writeFileSync(path.join(__dirname, '../note/', notebook.name, note.title), lib.getContent(note.content), 'utf8');
+                        // 将笔记列表写入数据库
+                        db.get('notes')
+                            .push(Object.assign({}, {
+                                guid: note.guid,
+                                title: note.title,
+                                content: note.content,
+                                notebookGuid: note.notebookGuid,
+                                created: note.created,
+                                updated: note.updated,
+                                deleted: note.deleted,
+                                tagGuids: note.tagGuids
+                            }))
+                            .value();
+                        console.log('笔记', note.title, '创建成功');
+                    }
                 }catch(err) {
                     console.log('生成笔记', note.title, '失败', err);
                 }

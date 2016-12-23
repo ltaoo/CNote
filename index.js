@@ -5,6 +5,9 @@ const program = require('commander')
 const path = process.cwd();
 
 const Evernote = require('./src/Evernote');
+const config = require('./src/config');
+
+const localDb = config.db;
 
 // 初始化一些默认的信息
 program
@@ -71,7 +74,25 @@ program.command('pull')
   .description('从印象笔记拉取更新，类似 git 的 pull')
   .action(() => {
     // 从印象笔记下载指定笔记
+    Evernote.fetchDb()
+        .then(remoteDb => {
+            // 获取数据库成功后，先比较最后更新时间是否一致
+            // console.log(db);
+            const localLastUpdate = localDb.get('lastUpdate').value();
+            const remoteLastUpdate = remoteDb.lastUpdate;
 
+            // console.log(localLastUpdate, remoteLastUpdate);
+
+            if(localLastUpdate === remoteLastUpdate) {
+                // 如果本地最后更新时间与远程最后更新时间一致，就表示并没有新的笔记或者更新
+                console.log('没有新内容');
+            } else {
+                // 反之就是有了，那就要一一比对？如果笔记数量很多岂不是性能很有问题？
+            }
+        })
+        .catch(err => {
+            console.log(err);
+        })
   })
 
 program.parse(process.argv);

@@ -11,46 +11,10 @@ const db = config.db;
 
 let noteStore = config.noteStore;
 const creatNotebook = require('./createNotebook');
+const updateDb = require('./updateDb');
 
 // 创建笔记函数
-function _makeNote(note) {
-  return new Promise((resolve, reject) => {
-    const {
-      noteTitle,
-      noteBody,
-      parentNotebook,
-      created,
-      tagNames
-    } = note;
-    let nBody = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
-    nBody += "<!DOCTYPE en-note SYSTEM \"http://xml.evernote.com/pub/enml2.dtd\">";
-    nBody += "<en-note>" + noteBody + "</en-note>";
-    // Create note object
-    // let ourNote = new Evernote.Note();
-    let ourNote = {};
-    ourNote.title = noteTitle;
-    ourNote.content = nBody;
-    // 创建时间
-    ourNote.created = created || new Date().getTime();
-    // 标签
-    ourNote.tagNames = tagNames;
-
-    // parentNotebook is optional; if omitted, default notebook is used
-    if (parentNotebook && parentNotebook.guid) {
-      ourNote.notebookGuid = parentNotebook.guid;
-    }
-
-    // Attempt to create note in Evernote account
-    noteStore.createNote(ourNote)
-      .then(note => {
-        // console.log(note);
-        resolve(note);
-      })
-      .catch(err => {
-        reject(err);
-      })
-  })
-}
+const _makeNote = require('./api')._makeNote;
 
 function createNote(title) {
   // 先判断是否存在
@@ -88,6 +52,15 @@ function createNote(title) {
   // 然后就可以新建笔记了
   notebook = db.get('notebooks').find({name: notebookName}).value();
   // 判断笔记本是否已经在印象笔记中存在
+
+
+  // 这一段不知道为什么写在这。。。。。。有点用
+  if (!db.has('notes').value()) {
+    db.set('notes', []).value()
+  }
+
+
+
   // console.log(notebook);
   if(!notebook) {
     // 如果是新笔记本，就要先创建笔记本
@@ -119,6 +92,9 @@ function createNote(title) {
               tagGuids: note.tagGuids
           }))
           .value();
+        db.set('lastUpdate', new Date().getTime()).value();
+        // 将数据库同步至印象笔记
+        updateDb();
       })
       .catch(err => {
         console.log(`创建${note.title}失败`);
@@ -144,8 +120,9 @@ function createNote(title) {
             tagGuids: note.tagGuids
         }))
         .value();
+      db.set('lastUpdate', new Date().getTime()).value();
       // 将数据库同步至印象笔记
-      
+      updateDb();
     })
     .catch(err => {
       console.log(err);

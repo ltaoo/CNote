@@ -8,8 +8,10 @@ module.exports = {
         
     },
     // 从印象笔记获取实时更新的数据库
-    fetchDb() {
-
+    parseDb(xml) {
+        let $ = cheerio.load(xml);
+        let body = $("en-note");
+        return body['0'].children[0].data;
     },
     // 提取印象笔记正文
     getContent(xml) {
