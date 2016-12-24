@@ -13,13 +13,13 @@ const creatNotebook = require('./createNotebook');
 const updateDb = require('./updateDb');
 
 // 创建笔记函数
-const _makeNote = require('./api')._makeNote;
+const createNote = require('./api').createNote;
 
-function createNote(title) {
+function uploadNote(title) {
   const db = config.getDb();
   // 先判断是否存在
   // 获取笔记本和笔记名
-  let notebookName = '我的第一个笔记本';
+  let notebookName = db.get('defaultNotebook').value();
   let noteName = title;
   if(title.indexOf('/') > -1) {
     // 如果存在 / ，就表示要放到指定笔记本内，如果没指定，就是放到默认笔记本里面
@@ -131,4 +131,4 @@ function createNote(title) {
 }
 
 // 导出
-module.exports = createNote;
+module.exports = uploadNote;

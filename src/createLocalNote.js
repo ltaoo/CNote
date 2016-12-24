@@ -12,36 +12,30 @@ function createLocalNote(note) {
     const db = config.getDb();
     return new Promise((resolve, reject) => {
         // 获取笔记内容
+        // console.log(note);
         const content = lib.getContent(note.content);
         // 笔记标题
         const title = note.title;
-        // 笔记本
         const notebook = db.get('notebooks').find({guid: note.notebookGuid}).value();
-        // console.log(notebook.name);
-        if(!notebook) {
-            // 如果笔记本不存在数据库中，表示这是新笔记本中的新笔记
-            createLocalNotebook(notebook);
-        }
-        try {
-            fs.writeFileSync(path.join(__dirname, notebook.name, title), content, 'utf8');
+        fs.writeFile(path.join(notebook.name, title), content, 'utf8', (err, res) => {
+            if(err) reject(`笔记 <${title}> 创建失败`);
             // 更新本地数据
             db.get('notes')
-                .find({guid: note.guid})
-                .assign({
+                .push({
                     guid: note.guid,
                     title: note.title,
-                    content: note.content,
+                    // content: note.content,
                     notebookGuid: note.notebookGuid,
                     created: note.created,
                     updated: note.updated,
                     deleted: note.deleted,
-                    tagGuids: note.tagGuids
+                    tagGuids: note.tagGuids,
+                    path: `${notebook.name}/${title}`,
+                    notebookName: notebook.name
                 })
                 .value();
             resolve(`笔记 <${title}> 创建成功`);
-        }catch(err) {
-            reject(`笔记 <${title}> 创建失败`);
-        }
+        });
     })
 }
 

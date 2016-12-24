@@ -27,8 +27,10 @@ module.exports = {
         // console.log(note);
         if(note.name === 'var') {
             return note.children[0].data;
+        } else {
+            // 就不是使用这个命令行工具创建的笔记，那要怎么办呢？
+            return undefined;
         }
-        return undefined;
     },
     getTags(source, md) {
         let tokens = md.parse(source, {});

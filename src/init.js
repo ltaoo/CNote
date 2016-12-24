@@ -17,7 +17,12 @@ function init(root, dirname) {
 
     // 生成 db.json 数据库文件
     try {
-        fs.writeFileSync(path.join(rootPath, 'db.json'), '', 'utf8');
+        const dbPath = path.join(rootPath, 'db.json');
+        fs.writeFileSync(dbPath, '', 'utf8');
+        const db = low(dbPath);
+        // 数据库添加基本信息
+        db.set('notebooks', []).value();
+        db.set('notes', []).value();
     }catch(err) {
         console.log('数据库文件初始化失败', err);
         success = false;
@@ -25,25 +30,27 @@ function init(root, dirname) {
 
     // 生成 config.json 配置文件
     try {
-        fs.writeFileSync(path.join(rootPath, 'config.json'), '', 'utf8');
-        const configdb = low(path.join(rootPath, 'config.json'));
+        const configPath = path.join(rootPath, 'config.json');
+        fs.writeFileSync(configPath, '', 'utf8');
+        const config = low(configPath);
         // 向数据库写入配置
         // 项目根目录
-        configdb.set('root', root).value();
+        config.set('root', root).value();
         // 保存笔记的文件名
-        configdb.set('dir', dirname).value();
+        config.set('dir', dirname).value();
         // 数据库文件名
-        configdb.set('db', 'db.json').value();
+        config.set('db', 'db.json').value();
         // token
-        configdb.set('token', '').value();
+        config.set('token', '').value();
         // 是否沙盒
-        configdb.set('sandbox', true).value();
+        config.set('sandbox', true).value();
         // 是否印象笔记
-        configdb.set('china', true).value();
+        config.set('china', true).value();
     }catch(err) {
         console.log('数据库文件初始化失败', err);
         success = false;
     }
+
     if(success) {
         console.log('初始化成功');
     } else {

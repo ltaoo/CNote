@@ -2,8 +2,9 @@
 const program = require('commander')
 
 const Evernote = require('./src/Evernote');
-const pull = require('./src/pull');
 const init = require('./src/init');
+const clone = require('./src/clone');
+const pull = require('./src/pull');
 
 // 获取执行命令的目录
 const sourceDir = process.cwd();
@@ -26,13 +27,19 @@ program.command('init')
         init(sourceDir, dirname);
     })
 
+// 第二步
+program.command('clone')
+    .description('第一次使用时执行，从印象笔记获取所有笔记')
+    .action(() => {
+        clone();
+    });
 
 program
     .command('create <file>')
-    .description('新建笔记到印象笔记')
+    .description('上传笔记到印象笔记')
     .action((path) => {
         //
-        Evernote.createNote(path);
+        Evernote.uploadNote(path);
     });
 
 
@@ -44,26 +51,6 @@ program.command('update <file>')
     });
 
 
-program.command('clone')
-    .description('第一次使用时执行，从印象笔记获取所有笔记')
-    .action(() => {
-        // 如果是初始化，表示是重新来，所以先将所有文件删除掉，包括数据库。
-        // delete all file
-        Evernote.fetchNotebookList()
-            .then(res => {
-                // 如果笔记本对应的文件夹都创建好了，就可以去获取笔记了
-                return Evernote.fetchNoteList();
-            })
-            .catch(err => {
-                console.log(err);
-            })
-            .then(res => {
-                console.log('初始化成功！');
-            })
-            .catch(err => {
-                console.log(err);
-            })
-    });
 
 
 

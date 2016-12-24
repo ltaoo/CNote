@@ -4,7 +4,7 @@ const path = require('path');
 // 读取配置文件
 function readConfig() {
   try {
-    var config = fs.readFileSync(path.join(__dirname, 'config.json'), 'utf8');
+    var config = fs.readFileSync(path.join('./config.json'), 'utf8');
     config = JSON.parse(config);
     return config;
   }catch(err){
@@ -29,19 +29,20 @@ function getClient() {
   return client;
 }
 
-// 返回数据库对象
-function getDb() {
-  const low = require('lowdb');
-  const db = low(path.join(__dirname, config.db));
-
-  return db;
-}
-
 // 返回数据库名字
 function getDbName() {
   const config = readConfig();
   return config.db;
 }
+
+// 返回数据库对象
+function getDb() {
+  const low = require('lowdb');
+  const db = low(path.join(getDbName()));
+
+  return db;
+}
+
 
 // 返回 noteStore 对象
 function getNoteStore() {
