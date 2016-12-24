@@ -28,31 +28,38 @@ note init <dirname>
 
 > 如果初始化没有成功，删除已经生成的文件夹重新`init`。
 
+比如：
+```bash
+note init evernote
+```
+就会在当前目录生成`evernote`文件夹，以及该文件夹下的`db.json`和`config.json`两个文件。
+
 ### 2、同步
 **进入新建的项目文件夹`<dirname>`**，执行下面命令
 ```bash
 note clone
 ```
 从印象笔记下载笔记到本地，生成对应的笔记本文件与笔记文件。
+> 如果没有填写`token`或者`token`有误，会提示认证失败。
 
 ### 新建笔记
 
-#### 笔记本
-在`note`文件夹下的文件夹，都是笔记本，在笔记本文件夹下写笔记。
-
+在<dirname>文件夹下的文件夹，都是笔记本，在笔记本文件夹下写笔记，然后使用命令创建即可
 ```bash
-note create <name>
+note create <notebookname/notename>
 ```
-
-就可以在印象笔记看到对应的笔记了，会生成对应的笔记本。
-
+notebookname 是指在 <dirname> 文件夹下的文件夹，notename 是 notebookname 文件夹下的笔记文件。
+比如：
 ```bash
 note create example/example.md
 ```
+
 如果`example`笔记本不存在，会先创建笔记本，再创建`example.md`笔记。
+> 在默认笔记本内写笔记，新建笔记到云端可以不加`notebookname`。同时会在云端生成`db.json`笔记，该笔记用来同步，不能删除。
+
 
 #### 标签
-
+在`md`文件使用特殊语法，比如
 ```
 # 欢迎使用 evernote
 @[tag1|tag2|tag3]

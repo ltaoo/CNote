@@ -10,7 +10,7 @@ function fetchDb() {
     const db = config.getDb();
     const noteStore = config.getNoteStore();
     return new Promise((resolve, reject) => {
-        const guid = db.getState().db;
+        const guid = db.get('db').value();
         // console.log(guid);
         noteStore.getNote(guid, true, false, false, false)
             .then(res => {

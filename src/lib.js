@@ -1,11 +1,16 @@
 const cheerio = require('cheerio');
-const fs =require('fs');
+const fs = require('fs');
 const path = require('path');
+const config = require('./config');
+const MarkdownIt = require('markdown-it'),
+  md = new MarkdownIt();
+
+const juice = require('juice');
 
 module.exports = {
     // 将本地数据库提交至印象笔记
     updateDb() {
-        
+
     },
     // 从印象笔记获取实时更新的数据库
     parseDb(xml) {
@@ -23,16 +28,16 @@ module.exports = {
         // ok 能够正常获取到
         // console.log(body);
         let len = body['0'].children.length;
-        let note = body['0'].children[len-1];
+        let note = body['0'].children[len - 1];
         // console.log(note);
-        if(note.name === 'var') {
+        if (note.name === 'var') {
             return note.children[0].data;
         } else {
             // 就不是使用这个命令行工具创建的笔记，那要怎么办呢？
             return undefined;
         }
     },
-    getTags(source, md) {
+    getTags(source) {
         let tokens = md.parse(source, {});
         tokens = tokens || [];
         // console.log(tokens);
@@ -49,38 +54,57 @@ module.exports = {
 
             tagNames = matched[2];
             if (tagNames) {
-            tagNames = tagNames
-              .split('|')
-              .map(s => s.trim())
-              .filter(s => !!s);
+                tagNames = tagNames
+                    .split('|')
+                    .map(s => s.trim())
+                    .filter(s => !!s);
             }
-            let reg = new RegExp('@\\[(.+?)\\]',"g");
+            let reg = new RegExp('@\\[(.+?)\\]', "g");
             source = source.replace(reg, '');
         }
-        return {tagNames, source} 
+        return {
+            tagNames,
+            source
+        }
     },
     // 判断命令行参数笔记是否存在
     noteExists(title) {
+        const db = config.getDb();
         // 先判断是否存在
         // 获取笔记本和笔记名
-        let notebookName = '我的第一个笔记本';
+        let notebookName = db.get('defaultNotebook').value();
         let noteName = title;
-        if(title.indexOf('/') > -1) {
-          // 如果存在 / ，就表示要放到指定笔记本内，如果没指定，就是放到默认笔记本里面
-          let _ary = title.split('/');
-          notebookName = _ary[0];
-          noteName = _ary[1];
+        if (title.indexOf('/') > -1) {
+            // 如果存在 / ，就表示要放到指定笔记本内，如果没指定，就是放到默认笔记本里面
+            let _ary = title.split('/');
+            if (_ary.length > 2) {
+                // 如果切分除了超过两个，就表示有问题
+                console.log('请确认路径无误');
+                return;
+            }
+            notebookName = _ary[0];
+            noteName = _ary[1];
         }
         // console.log(notebookName, noteName);
-        if(!fs.existsSync(path.join(__dirname, '../note', notebookName, noteName))) {
+        if (!fs.existsSync(path.join(notebookName, noteName))) {
             // 如果不存在
-            return false;
-        } else {
-            return {
-                notebookName,
-                noteName
-            };
+            console.log(`${notebookName}/${title} 不存在`);
+            return;
         }
+    },
+
+    // 渲染 html
+    renderHtml(sourceWithoutTag, source) {
+        // console.log(result);
+        // 渲染 markdown
+        let html = md.render(sourceWithoutTag);
+        html += `<var>${source}</var>`;
+        // console.log(html);
+        // 读取样式
+        let style = fs.readFileSync(path.join(__dirname, './themes', 'github_markdown.css'), 'utf8');
+        // 插入行内样式
+        let content = juice.inlineContent(html, style);
+
+        return content;
     }
 }
-

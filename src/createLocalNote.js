@@ -30,7 +30,7 @@ function createLocalNote(note) {
                     updated: note.updated,
                     deleted: note.deleted,
                     tagGuids: note.tagGuids,
-                    path: `${notebook.name}/${title}`,
+                    // path: `${notebook.name}/${title}`,
                     notebookName: notebook.name
                 })
                 .value();

@@ -46,6 +46,24 @@ const api = {
         })
     },
 
+    // 在云端创建笔记本
+    createNotebook(title) {
+      const noteStore = config.getNoteStore();
+      return new Promise((resolve, reject) => {
+        let ourNotebook = {};
+        ourNotebook.name = title;
+
+        noteStore.createNotebook(ourNotebook)
+          .then(notebook => {
+            resolve(notebook);
+          })
+          .catch(err => {
+            // console.log(err)
+            reject(err);
+          })
+      })
+    },
+
     // 更新云端笔记
     updateNote(note) {
         const noteStore = config.getNoteStore();
@@ -182,6 +200,25 @@ const api = {
                 .catch(err => {
                     reject('获取笔记列表失败-2', err);
                 });
+        })
+    },
+
+    // 搜索笔记
+    searchNote(filter) {
+        const db = config.getDb();
+        const noteStore = config.getNoteStore();
+        return new Promise((resolve, reject) => {
+            const {name} = filter;
+            // 先判断印象笔记是否存在
+            noteStore.findNotesMetadata({
+                words: name
+            }, 0, 10, {includeTitle: true})
+            .then(res => {
+                resolve(res);
+            })
+            .catch(err => {
+                reject(err);
+            })
         })
     }
 }

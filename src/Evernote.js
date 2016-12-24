@@ -1,7 +1,7 @@
 // 创建笔记
 const uploadNote = require('./uploadNote');
 // 创建笔记本
-const createNotebook = require('./createNotebook');
+const uploadNotebook = require('./uploadNotebook');
 // 更新笔记
 const updateNote = require('./updateNote');
 // 获取笔记本并在本地创建对应文件夹
@@ -14,9 +14,10 @@ const fetchDb = require('./fetchDb');
 module.exports = {
     // 上传笔记到云端
     uploadNote,
+    // 上传笔记本到云端
+    uploadNotebook,
+    // 更新笔记到云端
     updateNote,
-    // 创建笔记本
-    createNotebook,
     // 创建所有本地笔记本文件夹
     createLocalNotebooks,
     // 创建所有本地笔记文件

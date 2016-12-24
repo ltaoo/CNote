@@ -2,19 +2,17 @@ const fs = require('fs');
 const path = require('path');
 
 const config = require('./config');
+const createNotebook = require('./api').createNotebook;
 
 // 创建笔记本函数
-function makeNotebook(title) {
+function uploadNotebook(title) {
   const noteStore = config.getNoteStore();
   const db = config.getDb();
   return new Promise((resolve, reject) => {
-    let ourNotebook = {};
-    ourNotebook.name = title;
-
-    noteStore.createNotebook(ourNotebook)
+    lib.createNotebook(title)
       .then(notebook => {
         db.get('notebooks')
-          .push(Object.assign({}, {
+          .push({
             // 笔记本唯一 id
             "guid": notebook.guid,
             // 笔记本名
@@ -25,16 +23,16 @@ function makeNotebook(title) {
             "serviceCreated": notebook.serviceCreated,
             // 服务端更新时间？
             "serviceUpdated": notebook.serviceUpdated
-          }))
+          })
           .value();
         resolve(notebook);
       })
       .catch(err => {
         // console.log(err)
-        reject('笔记本创建失败，请检查是否已经存在', err);
+        reject(`笔记本《${title}》创建失败，请检查是否已经存在 ${JSON.stringify(err)}`);
       })
   })
 }
 
 // makeNotebook(noteStore, 'Nodejs');
-module.exports = makeNotebook;
+module.exports = uploadNotebook;
