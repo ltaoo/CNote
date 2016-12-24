@@ -1,10 +1,8 @@
-const config = require('./config');
 const fs = require('fs');
 const path = require('path');
 const cheerio = require('cheerio');
 
-let noteStore = config.noteStore;
-const db = config.db;
+const config = require('./config');
 
 const createLocalNote = require('./createLocalNote');
 
@@ -13,6 +11,8 @@ const lib = require('./lib');
 
 // 获取笔记列表
 function _fetchNote() {
+    const noteStore = config.getNoteStore();
+    const db = config.getDb();
     return new Promise((resolve, reject) => {
         var result = db.getState('notebooks');
         // console.log(result);
@@ -101,6 +101,8 @@ function _fetchNote() {
 
 
 function fetchNote() {
+    const noteStore = config.getNoteStore();
+    const db = config.getDb();
     // 暴露给外部的函数
     // 获取笔记列表
     _fetchNote()

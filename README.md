@@ -17,15 +17,16 @@ npm i
 npm link
 ```
 
-[申请 token ](https://sandbox.evernote.com/api/DeveloperToken.action) 后替换`src/config.js`对应字段。
 
 ### 1、初始化
 
 ```bash
-note init
+note init <dirname>
 ```
+生成保存笔记的文件夹<dirname>并在该目录下新建数据库文件`db.json`，以及配置文件`config.json`。
+[申请 token ](https://sandbox.evernote.com/api/DeveloperToken.action) 后替换`config.json`对应字段。
 
-生成保存笔记的文件夹`note`和数据库文件`db.json`。
+> 如果初始化没有成功，删除已经生成的文件夹重新`init`。
 
 ### 2、同步
 ```bash

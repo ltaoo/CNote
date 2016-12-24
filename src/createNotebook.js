@@ -1,12 +1,12 @@
-const config = require('./config');
 const fs = require('fs');
 const path = require('path');
 
-let noteStore = config.noteStore;
-const db = config.db;
+const config = require('./config');
 
 // 创建笔记本函数
 function makeNotebook(title) {
+  const noteStore = config.getNoteStore();
+  const db = config.getDb();
   return new Promise((resolve, reject) => {
     let ourNotebook = {};
     ourNotebook.name = title;

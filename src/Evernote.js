@@ -1,4 +1,3 @@
-// https://sandbox.evernote.com/api/DeveloperToken.action
 // 创建笔记
 const createNote = require('./createNote');
 // 创建笔记本
@@ -9,9 +8,9 @@ const updateNote = require('./updateNote');
 const fetchNotebookList = require('./fetchNotebookList');
 // 获取所有笔记并在本地创建对应文件
 const fetchNoteList = require('./fetchNoteList');
-
 // 获取数据库
 const fetchDb = require('./fetchDb');
+
 module.exports = {
   createNote,
   updateNote,

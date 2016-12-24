@@ -1,12 +1,10 @@
-const config = require('./config');
 const fs = require('fs');
 const path = require('path');
 
-const db = config.db;
-
-let noteStore = config.noteStore;
+const config = require('./config');
 // 获取笔记本列表
 function _fetchNotebooks() {
+	const noteStore = config.getNoteStore();
 	return new Promise((resolve, reject) => {
 		noteStore.listNotebooks()
 			// 获取笔记本列表成功
@@ -39,6 +37,7 @@ function _createNotebookDir(notebook) {
 }
 
 function fetchNotebookList() {
+	const db = config.getDb();
 	return new Promise((resolve, reject) => {
 		_fetchNotebooks()
 			.then(notebooks => {

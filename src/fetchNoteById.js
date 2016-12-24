@@ -1,19 +1,11 @@
-const cheerio = require('cheerio');
 const config = require('./config');
 
-const noteStore = config.noteStore;
-const db = config.db;
-
-const lib = require('./lib');
-
-
+// 根据 guid 获取笔记
 function fetchNoteById(guid) {
+    const noteStore = config.getNoteStore();
     return new Promise((resolve, reject) => {
         noteStore.getNote(guid, true, false, false, false)
             .then(res => {
-                // console.log(res);
-                // let content = lib.getContent(res.content);
-                // resolve(content);
                 resolve(res);
             })
             .catch(err => {

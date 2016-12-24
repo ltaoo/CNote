@@ -16,13 +16,10 @@
     "cheerio": "^0.22.0",
     "colors": "^1.1.2",
     "commander": "^2.9.0",
-    "diff": "^3.1.0",
     "evernote": "^2.0.0-beta",
-    "h2m": "^0.5.2",
     "juice": "^4.0.2",
     "lowdb": "^0.14.0",
     "markdown-it": "^8.2.2",
-    "node-zip": "^1.1.1",
     "text-encoding": "^0.6.1"
   }
 }

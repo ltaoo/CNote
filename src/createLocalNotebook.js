@@ -2,20 +2,16 @@
 const fs = require('fs');
 const path = require('path');
 const config = require('./config');
-const lib = require('./lib');
-// 数据库
-const db = config.db;
-// 笔记根目录
-const rootDir = config.root;
-// 
 
 function createLocalNotebook(notebook) {
+    // 数据库
+    const db = config.getDb();
     // 笔记本标题
     const title = notebook.name;
     // 判断
     // console.log(notebook.name);
     try {
-        fs.mkdirSync(path.join(rootDir, title));
+        fs.mkdirSync(path.join(__dirname, title));
         // 更新本地数据
         db.get('notebooks')
             .push(Object.assign({}, {
@@ -31,10 +27,10 @@ function createLocalNotebook(notebook) {
                 "serviceUpdated": notebook.serviceUpdated
             }))
             .value();
-        console.log('笔记本', title, '创建成功');
+        console.log(`笔记本《${title}》创建成功`);
     }catch(err) {
-        console.log('生成笔记本', title, '失败', err);
+        console.log(`笔记本《${title}》创建失败 - ${err}`);
     }
 }
 
-module.exports = createLocalNote;
+module.exports = createLocalNotebook;

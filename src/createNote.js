@@ -1,4 +1,3 @@
-const config = require('./config');
 const fs = require('fs');
 const path = require('path');
 const MarkdownIt = require('markdown-it'),
@@ -7,9 +6,9 @@ const MarkdownIt = require('markdown-it'),
 const juice = require('juice');
 
 const lib = require('./lib');
-const db = config.db;
 
-let noteStore = config.noteStore;
+const config = require('./config');
+
 const creatNotebook = require('./createNotebook');
 const updateDb = require('./updateDb');
 
@@ -17,6 +16,7 @@ const updateDb = require('./updateDb');
 const _makeNote = require('./api')._makeNote;
 
 function createNote(title) {
+  const db = config.getDb();
   // 先判断是否存在
   // 获取笔记本和笔记名
   let notebookName = '我的第一个笔记本';

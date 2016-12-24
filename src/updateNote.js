@@ -7,13 +7,13 @@ const MarkdownIt = require('markdown-it'),
 const juice = require('juice');
 
 const lib = require('./lib');
-const db = config.db;
 
-let noteStore = config.noteStore;
 
 const _updateNote = require('./api')._updateNote;
 
 function updateNote(title) {
+    const db = config.getDb();
+    const noteStore = config.getNoteStore();
     let _result = lib.noteExists(title);
     if (!_result) {
         // 如果笔记不存在

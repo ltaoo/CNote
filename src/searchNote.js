@@ -3,12 +3,12 @@ const config = require('./config');
 const fs = require('fs');
 const path = require('path');
 const lib = require('./lib');
-const db = config.db;
 
-let noteStore = config.noteStore;
 //
 
 function searchNote(obj) {
+    const db = config.getDb();
+    const noteStore = config.getNoteStore();
     return new Promise((resolve, reject) => {
     	const {name} = obj;
     	// 先判断印象笔记是否存在

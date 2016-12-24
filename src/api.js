@@ -2,58 +2,58 @@ const config = require('./config');
 const fs = require('fs');
 const path = require('path');
 const MarkdownIt = require('markdown-it'),
-  md = new MarkdownIt();
+    md = new MarkdownIt();
+
 
 const juice = require('juice');
-
 const lib = require('./lib');
-const db = config.db;
 
-let noteStore = config.noteStore;
-const APP_NAME = config.appName;
+const APP_NAME = config.getAppName();
 
-// 创建笔记函数
+//  在云端创建笔记
 function _makeNote(note) {
-  return new Promise((resolve, reject) => {
-    const {
-      noteTitle,
-      noteBody,
-      parentNotebook,
-      created,
-      tagNames
-    } = note;
-    let nBody = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
-    nBody += "<!DOCTYPE en-note SYSTEM \"http://xml.evernote.com/pub/enml2.dtd\">";
-    nBody += "<en-note>" + noteBody + "</en-note>";
-    // Create note object
-    // let ourNote = new Evernote.Note();
-    let ourNote = {};
-    ourNote.title = noteTitle;
-    ourNote.content = nBody;
-    // 创建时间
-    ourNote.created = created || new Date().getTime();
-    // 标签
-    ourNote.tagNames = tagNames;
+    const noteStore = config.getNoteStore();
+    return new Promise((resolve, reject) => {
+        const {
+            noteTitle,
+            noteBody,
+            parentNotebook,
+            created,
+            tagNames
+        } = note;
+        let nBody = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
+        nBody += "<!DOCTYPE en-note SYSTEM \"http://xml.evernote.com/pub/enml2.dtd\">";
+        nBody += "<en-note>" + noteBody + "</en-note>";
+        // Create note object
+        // let ourNote = new Evernote.Note();
+        let ourNote = {};
+        ourNote.title = noteTitle;
+        ourNote.content = nBody;
+        // 创建时间
+        ourNote.created = created || new Date().getTime();
+        // 标签
+        ourNote.tagNames = tagNames;
 
-    // parentNotebook is optional; if omitted, default notebook is used
-    if (parentNotebook && parentNotebook.guid) {
-      ourNote.notebookGuid = parentNotebook.guid;
-    }
+        // parentNotebook is optional; if omitted, default notebook is used
+        if (parentNotebook && parentNotebook.guid) {
+            ourNote.notebookGuid = parentNotebook.guid;
+        }
 
-    // Attempt to create note in Evernote account
-    noteStore.createNote(ourNote)
-      .then(note => {
-        // console.log(note);
-        resolve(note);
-      })
-      .catch(err => {
-        reject(err);
-      })
-  })
+        // Attempt to create note in Evernote account
+        noteStore.createNote(ourNote)
+            .then(note => {
+                // console.log(note);
+                resolve(note);
+            })
+            .catch(err => {
+                reject(err);
+            })
+    })
 }
 
-// 更新笔记
+// 更新云端笔记
 function _updateNote(note) {
+    const noteStore = config.getNoteStore();
     return new Promise((resolve, reject) => {
         const {
             guid,
