@@ -27,3 +27,6 @@ diff.forEach(function(part){
   }
 });
 
+
+// add 的 lastUpdate 肯定是最新的，因为旧的 lastUpdate 是被 remove 了
+
