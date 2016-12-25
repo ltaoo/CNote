@@ -98,7 +98,7 @@ const api = {
             if (parentNotebook && parentNotebook.guid) {
                 ourNote.notebookGuid = parentNotebook.guid;
             }
-
+            // console.log('hwerew')
             // Attempt to create note in Evernote account
             noteStore.updateNote(ourNote)
                 .then(note => {
@@ -117,13 +117,11 @@ const api = {
         return new Promise((resolve, reject) => {
             noteStore.listNotebooks()
                 // 获取笔记本列表成功
-                .then(function(notebooks) {
-                    // notebooks is the list of Notebook objects
-                    // console.log(notebooks);
+                .then(notebooks => {
                     resolve(notebooks);
                 })
                 .catch(err => {
-                    reject(err);
+                    reject(`fetchNotebooks 获取笔记列表失败 - ${JSON.stringify(err)}`);
                 });
         })
     },
@@ -143,7 +141,11 @@ const api = {
                         });
                     });
                     _notebooks = notebooks;
+                    // 获取笔记本列表成功
                     return Promise.all(_ary);
+                })
+                .catch(err => {
+                    reject(`fetchNotes 获取笔记本列表失败 - ${JSON.stringify(err)}`);
                 })
                 .then(res => {
                     // console.log(res);
@@ -160,6 +162,11 @@ const api = {
                         return notebook.totalNotes > 0;
                     });
 
+                    // 如果所有笔记本都没有笔记
+                    if(notebooks.length === 0) {
+                        resolve(notebooks);
+                    }
+
                     // 读取
                     return Promise.all(notebooks.map(notebook => {
                         return noteStore.findNotesMetadata({
@@ -173,6 +180,9 @@ const api = {
                             includeAttributes: true
                         });
                     }))
+                })
+                .catch(err => {
+                    reject(`获取笔记元信息失败 - ${JSON.stringify(err)}`);
                 })
                 .then(metadatas => {
                     // 这里是真正读取笔记的结果
@@ -198,8 +208,8 @@ const api = {
                     resolve(_notes);
                 })
                 .catch(err => {
-                    reject('获取笔记列表失败-2', err);
-                });
+                    reject(`再次获取笔记元信息失败 - ${JSON.stringify(err)}`);
+                })
         })
     },
 
@@ -214,11 +224,32 @@ const api = {
                 words: name
             }, 0, 10, {includeTitle: true})
             .then(res => {
+                // console.log(res);
+                if(res.totalNotes === 0) {
+                    // 如果结果为空
+                    reject(`搜索结果为空`);
+                }
                 resolve(res);
             })
             .catch(err => {
                 reject(err);
             })
+        })
+    },
+
+    // 根据 id 获取笔记
+    fetchNoteById(guid, notebookName) {
+        console.log(guid, notebookName);
+        const noteStore = config.getNoteStore();
+        return new Promise((resolve, reject) => {
+            noteStore.getNote(guid, true, false, false, false)
+                .then(note => {
+                    note.notebookName = notebookName;
+                    resolve(note);
+                })
+                .catch(err => {
+                    reject(err);
+                })
         })
     }
 }

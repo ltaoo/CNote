@@ -14,12 +14,16 @@ function fetchDb() {
         // console.log(guid);
         noteStore.getNote(guid, true, false, false, false)
             .then(res => {
+                // console.log(res);
                 let data = res.content;
                 data = lib.parseDb(data);
+                let result = JSON.parse(data);
                 // console.log(db)
-                resolve(JSON.parse(data));
+                // console.log(result);
+                resolve(result);
             })
             .catch(err => {
+                // console.log(err);
                 reject(err);
             })
     })

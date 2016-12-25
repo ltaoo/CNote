@@ -53,6 +53,21 @@ function uploadNote(title) {
       .then(notebook => {
         // 创建成功后，才继续创建笔记
         console.log(`笔记本 《${notebook.name}》 创建成功`);
+        // 写入数据库
+        db.get('notebooks')
+          .push({
+              // 笔记本唯一 id
+              "guid": notebook.guid,
+              // 笔记本名
+              "name": notebook.name,
+              // 是否是默认笔记本
+              "defaultNotebook": notebook.defaultNotebook,
+              // 笔记本创建时间？
+              "serviceCreated": notebook.serviceCreated,
+              // 服务端更新时间？
+              "serviceUpdated": notebook.serviceUpdated
+          })
+          .value();
         _notebook = notebook;
         return createNote({
           noteTitle: noteName.trim(),
@@ -76,7 +91,6 @@ function uploadNote(title) {
               notebookName: _notebook.name
           })
           .value();
-        db.set('lastUpdate', new Date().getTime()).value();
         // 将数据库同步至印象笔记
         updateDb();
       })
@@ -105,7 +119,6 @@ function uploadNote(title) {
             notebookName: _notebook.name
         }))
         .value();
-      db.set('lastUpdate', new Date().getTime()).value();
       // 将数据库同步至印象笔记
       updateDb();
     })

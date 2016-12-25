@@ -23,6 +23,7 @@ function init(root, dirname) {
         // 数据库添加基本信息
         db.set('notebooks', []).value();
         db.set('notes', []).value();
+        db.set('lastUpdate', new Date().getTime()).value();
     }catch(err) {
         console.log('数据库文件初始化失败', err);
         success = false;

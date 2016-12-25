@@ -1,15 +1,45 @@
-let createNote = require('../createNote');
+let createLocalNote = require('../src/createLocalNote');
 let cheerio = require('cheerio');
 
 let fs = require('fs');
 
-fs.readFile('../data/index.html', 'utf8', (err, res) => {
-  if(err) console.log(err);
-
-  createNote({
-    noteTitle: '新建相同标签笔记',
-    noteBody: '如果新建一篇有相同标签的笔记，是会归档到一起吗？',
-    created: new Date('2016-10-8').getTime(),
-    tagNames: ['test', 'hello world']
-  });
-})
+createLocalNote({ guid: 'b5880a7b-0810-4150-8597-596ed566e7f7',
+  title: 'test.md',
+  content: '<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE en-note SYSTEM "http://xml.evernote.com/pub/enml2.dtd"><en-note><var style="box-sizing: border-box; display: none;"></var></en-note>',
+  contentLength: 180,
+  created: 1482615648000,
+  updated: 1482615662000,
+  deleted: null,
+  active: true,
+  updateSequenceNum: 143,
+  notebookGuid: '5762571e-c523-465f-abef-a7af8b2804fb',
+  tagGuids: null,
+  resources: null,
+  attributes:
+   { subjectDate: null,
+     latitude: null,
+     longitude: null,
+     altitude: null,
+     author: null,
+     source: null,
+     sourceURL: null,
+     sourceApplication: null,
+     shareDate: null,
+     reminderOrder: null,
+     reminderDoneTime: null,
+     reminderTime: null,
+     placeName: null,
+     contentClass: null,
+     applicationData: null,
+     lastEditedBy: null,
+     classifications: null,
+     creatorId: null,
+     lastEditorId: null,
+     sharedWithBusiness: null,
+     conflictSourceNoteGuid: null,
+     noteTitleQuality: null },
+  tagNames: null,
+  sharedNotes: null,
+  restrictions: null,
+  limits: null }
+);

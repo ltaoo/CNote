@@ -31,7 +31,13 @@ program.command('init')
 program.command('clone')
     .description('第一次使用时执行，从印象笔记获取所有笔记')
     .action(() => {
-        clone();
+        clone()
+            .then(res => {
+                console.log(res);
+            })
+            .catch(err => {
+                console.log(err);
+            })
     });
 
 program
@@ -50,7 +56,18 @@ program.command('update <file>')
         Evernote.updateNote(path);
     });
 
-
+// 批量从云端更新到本地
+program.command('pull')
+    .description('从印象笔记拉取更新，类似 git 的 pull')
+    .action(() => {
+        pull()
+            .then(res => {
+                console.log(res);
+            })
+            .catch(err => {
+                console.log(err);
+            });
+    })
 
 
 
@@ -62,10 +79,5 @@ program
     })
 
 
-program.command('pull')
-    .description('从印象笔记拉取更新，类似 git 的 pull')
-    .action(() => {
-        pull();
-    })
 
 program.parse(process.argv);

@@ -16,6 +16,7 @@ module.exports = {
     parseDb(xml) {
         let $ = cheerio.load(xml);
         let body = $("en-note");
+        // console.log(body);
         return body['0'].children[0].data;
     },
     // 提取印象笔记正文
@@ -28,10 +29,11 @@ module.exports = {
         // ok 能够正常获取到
         // console.log(body);
         let len = body['0'].children.length;
+        console.log(body['0'].children);
         let note = body['0'].children[len - 1];
-        // console.log(note);
+        console.log(note);
         if (note.name === 'var') {
-            return note.children[0].data;
+            return note.children[0] ?note.children[0].data : '';
         } else {
             // 就不是使用这个命令行工具创建的笔记，那要怎么办呢？
             return undefined;
@@ -80,7 +82,7 @@ module.exports = {
             if (_ary.length > 2) {
                 // 如果切分除了超过两个，就表示有问题
                 console.log('请确认路径无误');
-                return;
+                return false;
             }
             notebookName = _ary[0];
             noteName = _ary[1];
@@ -89,8 +91,9 @@ module.exports = {
         if (!fs.existsSync(path.join(notebookName, noteName))) {
             // 如果不存在
             console.log(`${notebookName}/${title} 不存在`);
-            return;
+            return false;
         }
+        return true;
     },
 
     // 渲染 html

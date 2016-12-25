@@ -1,4 +1,5 @@
 const config = require('./config');
+
 const fetchNotebooks = require('./api').fetchNotebooks;
 const createLocalNotebook = require('./createLocalNotebook');
 
@@ -25,16 +26,10 @@ function createNotebooks() {
 					}
 
 					// 最后是生成对应文件夹并写入数据库
-					ary.push(createLocalNotebook(notebook));
+					createLocalNotebook(notebook);
 				}
-				return Promise.all(ary);
-			})
-			.catch(err => {
-				reject(`获取笔记本列表失败 - ${JSON.stringify(err)}`);
-			})
-			.then((res) => {
-				// 所有笔记本都创建成功
-				resolve(res);
+
+				resolve(true);
 			})
 			.catch(err => {
 				reject(`创建笔记本文件夹失败 - ${JSON.stringify(err)}`);

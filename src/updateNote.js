@@ -7,24 +7,36 @@ const MarkdownIt = require('markdown-it'),
 const juice = require('juice');
 
 const lib = require('./lib');
+const updateDb = require('./updateDb');
 
 
-const _updateNote = require('./api')._updateNote;
+const _updateNote = require('./api').updateNote;
 
 function updateNote(title) {
     const db = config.getDb();
-    const noteStore = config.getNoteStore();
-    let _result = lib.noteExists(title);
-    if (!_result) {
-        // 如果笔记不存在
-        console.log(title, '不存在');
+    // 先判断是否存在
+    // 获取笔记本和笔记名
+    let notebookName = db.get('defaultNotebook').value();
+    let noteName = title;
+    if (title.indexOf('/') > -1) {
+        // 如果存在 / ，就表示要放到指定笔记本内，如果没指定，就是放到默认笔记本里面
+        let _ary = title.split('/');
+        if (_ary.length > 2) {
+            // 如果切分除了超过两个，就表示有问题
+            console.log('请确认路径无误');
+            return;
+        }
+        notebookName = _ary[0];
+        noteName = _ary[1];
+    }
+    // console.log(notebookName, noteName);
+    if (!fs.existsSync(path.join(notebookName, noteName))) {
+        // 如果不存在
+        console.log(`${notebookName}/${title} 不存在`);
         return;
     }
-    const {
-        notebookName,
-        noteName
-    } = _result;
     // 判断是否存在于数据库中，如果不存在，就是创建
+    // console.log(noteName);
     let _note = db.get('notes')
         .find({
             title: noteName
@@ -37,13 +49,14 @@ function updateNote(title) {
         return;
     }
 
+    // console.log(notebookName, noteName);
     // 如果存在同名笔记，但不是同一文件夹下的
     let _notebook = db.get('notebooks')
         .find({
             guid: _note.notebookGuid
         })
         .value();
-    if(_notebook.name !== notebookName) {
+    if (_notebook.name !== notebookName) {
         // 如果笔记本和笔记对不上
         console.log(`${noteName} 不在数据库中，请使用 create <file> 创建`);
         return;
@@ -51,13 +64,15 @@ function updateNote(title) {
 
     // 该笔记确确实实是已经存在的，是进行更新操作的笔记。
     // 获取到内容
-    let source = fs.readFileSync(path.join(__dirname, '../note', notebookName, noteName), 'utf8');
+    console.log(notebookName, noteName);
+    let source = fs.readFileSync(path.join(notebookName, noteName), 'utf8');
     // console.log(source);
     // 解析 标签
     let result = lib.getTags(source, md);
     // console.log(result);
     // 渲染 markdown
     let html = md.render(result.source);
+    html += `<var>${source}</var>`;
     // 读取样式
     let style = fs.readFileSync(path.join(__dirname, './themes', 'github_markdown.css'), 'utf8');
     // 插入行内样式
@@ -75,7 +90,9 @@ function updateNote(title) {
         })
         .then(note => {
             db.get('notes')
-                .find({guid: note.guid})
+                .find({
+                    guid: note.guid
+                })
                 .assign({
                     guid: note.guid,
                     title: note.title,
@@ -87,7 +104,8 @@ function updateNote(title) {
                     tagGuids: note.tagGuids
                 })
                 .value();
-            console.log(`笔记 “${note.title}” 更新成功`);
+            console.log(`笔记 <${note.title}> 更新成功`);
+            updateDb();
         })
         .catch(err => {
             console.log(err);

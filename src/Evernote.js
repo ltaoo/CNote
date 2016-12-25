@@ -8,8 +8,6 @@ const updateNote = require('./updateNote');
 const createLocalNotebooks = require('./createLocalNotebooks');
 // 获取所有笔记并在本地创建对应文件
 const createLocalNotes = require('./createLocalNotes');
-// 获取数据库
-const fetchDb = require('./fetchDb');
 
 module.exports = {
     // 上传笔记到云端
@@ -21,6 +19,5 @@ module.exports = {
     // 创建所有本地笔记本文件夹
     createLocalNotebooks,
     // 创建所有本地笔记文件
-    createLocalNotes,
-    fetchDb
+    createLocalNotes
 };
