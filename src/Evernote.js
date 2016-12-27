@@ -1,15 +1,15 @@
 // 创建笔记
-const uploadNote = require('./uploadNote');
+import uploadNote from './uploadNote';
 // 创建笔记本
-const uploadNotebook = require('./uploadNotebook');
+import uploadNotebook from './uploadNotebook';
 // 更新笔记
-const updateNote = require('./updateNote');
+import updateNote from './updateNote';
 // 获取笔记本并在本地创建对应文件夹
-const createLocalNotebooks = require('./createLocalNotebooks');
+import createLocalNotebooks from './createLocalNotebooks';
 // 获取所有笔记并在本地创建对应文件
-const createLocalNotes = require('./createLocalNotes');
+import createLocalNotes from './createLocalNotes';
 
-module.exports = {
+export default {
     // 上传笔记到云端
     uploadNote,
     // 上传笔记本到云端

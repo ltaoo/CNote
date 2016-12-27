@@ -1,16 +1,12 @@
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
 
-const lib = require('./lib');
+import lib from './lib';
+import config from './config';
+import updateDb from './updateDb';
 
-const config = require('./config');
-
-const updateDb = require('./updateDb');
-
-// 创建笔记函数
-const createNote = require('./api').createNote;
-// 创建笔记本函数
-const createNotebook = require('./api').createNotebook;
+// 将本地笔记上传到云端接口，创建笔记本函数
+import {createNote, createNotebook} from './api';
 
 function uploadNote(title) {
   const db = config.getDb();
@@ -22,14 +18,16 @@ function uploadNote(title) {
     // 如果存在 / ，就表示要放到指定笔记本内，如果没指定，就是放到默认笔记本里面
     let _ary = title.split('/');
     if(_ary.length > 2) {
-      // 如果切分除了超过两个，就表示有问题
+      // 如果切分出的路径超过两个，就表示有问题
       console.log('请确认路径无误');
       return;
     }
     notebookName = _ary[0];
     noteName = _ary[1];
+    // 销毁该变量
+    _ary = null;
   }
-  // console.log(notebookName, noteName);
+  // 路径无误，检查文件是否存在
   if(!fs.existsSync(path.join(notebookName, noteName))) {
     // 如果不存在
     console.log(`${notebookName}/${title} 不存在`);
@@ -42,8 +40,8 @@ function uploadNote(title) {
   let result = lib.getTags(source);
   // 这样渲染出来的 html 就不会包含 @[]
   const content = lib.renderHtml(result.source, source);
-  // 然后就可以新建笔记了
   
+  // 然后就可以新建笔记了
   // 判断笔记本是否已经在印象笔记中存在
   let _notebook = db.get('notebooks').find({name: notebookName}).value();
   // console.log(notebook);
