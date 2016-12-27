@@ -1,11 +1,6 @@
-var colors = require('colors');
-
-// console.log('hello'.green); // outputs green text
-// console.log('i like cake and pies'.underline.red) // outputs red underlined text
-
+import colors from 'colors';
 async function person() {
 	try {
-
 		let result = await getResult();
 		console.log(`${result}`.green);
 	}catch(err) {
