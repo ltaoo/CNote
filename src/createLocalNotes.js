@@ -32,6 +32,7 @@ async function createLocalNotes() {
 
         // 获取到由笔记详情组成的数组
         noteDetails.forEach(note => {
+            // console.log('开始创建本地文件');
             // 创建本地 md 文件
             createLocalNote(note);
         });
