@@ -1,9 +1,12 @@
-const fs = require('fs');
-const Evernote = require('./Evernote');
-const config = require('./config');
-const fetchNoteById = require('./api').fetchNoteById;
-const searchNote = require('./api').searchNote;
-const lib = require('./lib');
+import fs from 'fs';
+import Evernote from './Evernote';
+import config from './config';
+
+import {
+    fetchNoteById,
+    searchNote
+} from './api';
+import lib from './lib';
 // 如果是初始化，表示是重新来，所以先将所有文件删除掉，包括数据库。
 // delete all file
 function clone() {

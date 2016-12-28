@@ -225,10 +225,10 @@ const api = {
             }, 0, 10, {includeTitle: true})
             .then(res => {
                 // console.log(res);
-                if(res.totalNotes === 0) {
-                    // 如果结果为空
-                    reject(`搜索结果为空`);
-                }
+                // if(res.totalNotes === 0) {
+                //     // 如果结果为空
+                //     resolve(404);
+                // }
                 resolve(res);
             })
             .catch(err => {

@@ -1,3 +1,3 @@
 var register = require('babel-core/register');
 
-require('./src/test');
+require('./src/index');

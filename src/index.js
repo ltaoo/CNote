@@ -4,6 +4,7 @@ import Evernote from './Evernote';
 import init from './init';
 import clone from './clone';
 import pull from './pull';
+import updateDb from './updateDb';
 
 // 获取执行命令的目录
 const sourceDir = process.cwd();
@@ -24,7 +25,7 @@ program.command('init')
     .action((dirname) => {
         // 初始化就是在本地初始化 note 文件夹和 db.json 数据库
         init(sourceDir, dirname);
-    })
+    });
 
 // 第二步
 program.command('clone')
@@ -77,6 +78,11 @@ program
         // 遍历文件夹，比对，性能很有问题。。。
     })
 
+program.command('refresh')
+    .description('将本地数据库同步到云端')
+    .action(() => {
+        updateDb();
+    })
 
 
 program.parse(process.argv);
