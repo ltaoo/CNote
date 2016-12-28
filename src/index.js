@@ -56,13 +56,7 @@ program.command('update <file>')
 program.command('pull')
     .description('从印象笔记拉取更新，类似 git 的 pull')
     .action(() => {
-        pull()
-            .then(res => {
-                console.log(res);
-            })
-            .catch(err => {
-                console.log(err);
-            });
+        pull();
     })
 
 
