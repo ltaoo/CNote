@@ -239,7 +239,7 @@ const api = {
 
     // 根据 id 获取笔记
     fetchNoteById(guid, notebookName) {
-        console.log(guid, notebookName);
+        // console.log(guid, notebookName);
         const noteStore = config.getNoteStore();
         return new Promise((resolve, reject) => {
             noteStore.getNote(guid, true, false, false, false)

@@ -1,10 +1,11 @@
-// 创建本地笔记本文件夹
-const fs = require('fs');
-const config = require('./config');
+import fs from 'fs';
+import {
+    getOption
+} from './lib';
 
 function createLocalNotebook(notebook) {
     // 数据库
-    const db = config.getDb();
+    const {db} = getOption();
     // 笔记本标题
     const title = notebook.name;
     // 判断
@@ -26,10 +27,8 @@ function createLocalNotebook(notebook) {
             })
             .value();
         console.log(`笔记本《${title}》创建成功`);
-        return true;
     }catch(err) {
-        console.log(`笔记本《${title}》创建失败 ${JSON.stringify(err)}`);
-        return false;
+        console.log(err);
     }
 }
 

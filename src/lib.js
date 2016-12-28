@@ -8,9 +8,17 @@ const MarkdownIt = require('markdown-it'),
 const juice = require('juice');
 
 module.exports = {
-    // 将本地数据库提交至印象笔记
-    updateDb() {
-
+    getOption() {
+        const db = config.getDb();
+        const DB_NAME = config.getDbName();
+        const APP_NAME = config.getAppName();
+        const noteStore = config.getNoteStore();
+        return {
+            db,
+            DB_NAME,
+            APP_NAME,
+            noteStore
+        };
     },
     // 从印象笔记获取实时更新的数据库
     parseDb(xml) {
@@ -23,15 +31,16 @@ module.exports = {
     getContent(xml) {
         // 从印象笔记的 en-note 标签内获取真正的内容
         let $ = cheerio.load(xml);
+
         let body = $("en-note");
         // 判断是否是 md 笔记，如果是才 load ，不是就直接获取内容
         // console.log(body);
         // ok 能够正常获取到
         // console.log(body);
         let len = body['0'].children.length;
-        console.log(body['0'].children);
+        // console.log(body['0'].children);
         let note = body['0'].children[len - 1];
-        console.log(note);
+        // console.log(note);
         if (note.name === 'var') {
             return note.children[0] ?note.children[0].data : '';
         } else {

@@ -5,6 +5,7 @@ import init from './init';
 import clone from './clone';
 import pull from './pull';
 import updateDb from './updateDb';
+import downloadDb from './downloadDb';
 
 // 获取执行命令的目录
 const sourceDir = process.cwd();
@@ -31,13 +32,8 @@ program.command('init')
 program.command('clone')
     .description('第一次使用时执行，从印象笔记获取所有笔记')
     .action(() => {
-        clone()
-            .then(res => {
-                console.log(res);
-            })
-            .catch(err => {
-                console.log(err);
-            })
+        clone();
+        console.log('\n===== clone 完成 =====\n');
     });
 
 program
@@ -82,6 +78,12 @@ program.command('refresh')
     .description('将本地数据库同步到云端')
     .action(() => {
         updateDb();
+    })
+
+program.command('download')
+    .description('从云端获取数据库到本地')
+    .action(() => {
+        downloadDb();
     })
 
 

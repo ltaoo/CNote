@@ -1,15 +1,17 @@
-// 创建本地 md 笔记文件
 import fs from 'fs';
 import path from 'path';
 import config from './config';
-import lib from './lib';
+import {
+    getOption,
+    getContent,
+} from './lib';
 
+// 创建本地 md 笔记文件
 function createLocalNote(note) {
-    const db = config.getDb();
-    const dbName = config.getDbName();
+    const {db} = getOption();
     // 获取笔记内容
-    const content = lib.getContent(note.content);
-    console.log(content);
+    // console.log('note content', note.content);
+    const content = getContent(note.content);
     // 笔记标题
     const title = note.title;
     // 对应的笔记本对象
@@ -19,10 +21,10 @@ function createLocalNote(note) {
         fs.writeFileSync(path.join(notebook.name, title), content, 'utf8');
         // 更新本地数据
     }catch(err) {
-        console.log(`笔记 <${title}> 创建失败`);
-        return false;
+        console.log(`笔记 <${title}> 创建失败`, err);
     }
     // 如果已经存在，就是更新
+    // console.log(db.get('notes').find({guid: note.guid}).value());
     if(db.get('notes').find({guid: note.guid}).value()) {
         // 
         db.get('notes').find({guid: note.guid}).assign({
@@ -55,7 +57,6 @@ function createLocalNote(note) {
             .value();
         console.log(`笔记 <${title}> 创建成功`);
     }
-    return true;
 }
 
 export default createLocalNote;

@@ -1,60 +1,45 @@
-const config = require('./config');
+import config from './config';
 // 工具方法
-const lib = require('./lib');
+import lib from './lib';
 
-const fetchNotes = require('./api').fetchNotes;
-const createLocalNote = require('./createLocalNote');
+import {
+    fetchNotes
+} from './api';
+
+import createLocalNote from './createLocalNote';
 
 
-function createLocalNotes() {
+async function createLocalNotes() {
     const db = config.getDb();
     const dbName = config.getDbName();
     const noteStore = config.getNoteStore();
-    return new Promise((resolve, reject) => {
+    try {
         // 从云端获取笔记列表
-        fetchNotes()
-            .then(notes => {
-                // 获取笔记列表成功，读取内容并生成 md 文件
-                let ary = notes.filter(note => {
-                    // console.log(note.guid);
-                    if(note.title !== dbName) {
-                        return note;
-                    }
-                })
-                ary = ary.map(note => {
-                    return noteStore.getNote(note.guid, true, false, false, false);
-                })
-                // console.log(ary);
-                return Promise.all(ary);
-            })
-            // .catch(err => {
-            //     reject(`获取笔记列表失败 - ${JSON.stringify(err)}`);
-            // })
-            .then(notes => {
-                // 获取笔记内容成功，然后可以生成对应的文件了
-                notes.forEach(note => {
-                    // console.log(note);
-                    // 详细笔记
-                    let result = createLocalNote(note);
-                    // console.log(result);
-                });
+        let notes = await fetchNotes();
+        let ary = notes.filter(note => {
+            // console.log(note.guid);
+            if(note.title !== dbName) {
+                return note;
+            }
+        });
 
-                // console.log(_ary);
-                // return Promise.all(_ary);
-                resolve('所有笔记创建成功');
-            })
-            // .catch(err => {
-            //     console.log('23123123123213213123123');
-            //     reject(`创建笔记文件失败 - ${JSON.stringify(err)}`);
-            // })
-            // .then(res => {
-            //     console.log('所有笔记创建成功');
-            //     resolve('所有笔记创建成功');
-            // })
-            .catch(err => {
-                reject(`创建笔记文件失败 - ${JSON.stringify(err)}`);
-            })
-    })
+        let noteDetails = [];
+        for(let i = 0, len = ary.length; i < len; i++) {
+            let note = ary[i];
+            let noteDetail = await noteStore.getNote(note.guid, true, false, false, false);
+            noteDetails.push(noteDetail);
+        }
+
+        // 获取到由笔记详情组成的数组
+        noteDetails.forEach(note => {
+            // 创建本地 md 文件
+            createLocalNote(note);
+        });
+    }catch(err) {
+        console.log(err);
+    }
+
+    console.log('\n===== 全部笔记生成 =====\n');
 }
 
-module.exports = createLocalNotes;
+export default createLocalNotes;
