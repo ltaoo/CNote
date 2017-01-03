@@ -6,6 +6,8 @@ import clone from './clone';
 import pull from './pull';
 import updateDb from './updateDb';
 import downloadDb from './downloadDb';
+// 导入笔记
+import importNote from './importNote';
 
 // 获取执行命令的目录
 const sourceDir = process.cwd();
@@ -59,6 +61,12 @@ program.command('pull')
         pull();
     })
 
+// 从为知笔记导入笔记
+program.command('import')
+    .description('导入 Json 格式的笔记')
+    .action((dirname) => {
+        importNote(dirname);
+    })
 
 
 program
