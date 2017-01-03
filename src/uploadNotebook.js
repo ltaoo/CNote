@@ -1,15 +1,20 @@
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
 
-const config = require('./config');
-const createNotebook = require('./api').createNotebook;
+import config from './config';
+import {createNotebook} from './api';
 
 // 创建笔记本函数
 function uploadNotebook(title) {
-  const noteStore = config.getNoteStore();
-  const db = config.getDb();
   return new Promise((resolve, reject) => {
-    lib.createNotebook(title)
+    const noteStore = config.getNoteStore();
+    const db = config.getDb();
+    // 先判断是否存在吧？
+    if(db.get('notebooks').find({name: title}).value()) {
+      // 已经存在
+      reject(`笔记本《${title}》创建失败，已经存在`);
+    }
+    createNotebook(title)
       .then(notebook => {
         db.get('notebooks')
           .push({
@@ -29,10 +34,10 @@ function uploadNotebook(title) {
       })
       .catch(err => {
         // console.log(err)
-        reject(`笔记本《${title}》创建失败，请检查是否已经存在 ${JSON.stringify(err)}`);
+        reject(`笔记本《${title}》创建失败 ${JSON.stringify(err)}`);
       })
   })
 }
 
 // makeNotebook(noteStore, 'Nodejs');
-module.exports = uploadNotebook;
+export default uploadNotebook;

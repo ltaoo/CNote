@@ -3,7 +3,6 @@ import path from 'path';
 
 import lib from './lib';
 import config from './config';
-import updateDb from './updateDb';
 
 // 将本地笔记上传到云端接口，创建笔记本函数
 import {
@@ -42,13 +41,15 @@ function _getHtml({notebookName, noteName}) {
   // 获取到标签，并将 @[] 语法从 md 文件中删除
   let result = lib.getTags(source);
   // 这样渲染出来的 html 就不会包含 @[]
-  const content = lib.renderHtml(result.source, source);
+  let content = lib.renderHtml(result.source, source);
+  content = content.replace()
   return {tagNames: result.tagNames, content};
 }
 
 function _uploadNotebook(notebookName) {
   const db = config.getDb();
   return new Promise((resolve, reject) => {
+      // console.log(notebookName)
       createNotebook(notebookName)
         .then(notebook => {
           db.get('notebooks')
@@ -73,14 +74,15 @@ function _uploadNotebook(notebookName) {
   })
 }
 
-function _createNote({noteName, content, tagNames, parentNotebook}) {
+function _createNote({noteName, content, tagNames, parentNotebook, created}) {
   const db = config.getDb();
   return new Promise((resolve, reject) => {
     createNote({
       noteTitle: noteName.trim(),
       noteBody: content,
       tagNames,
-      parentNotebook
+      parentNotebook,
+      created
     })
     .then(note => {
       console.log(`笔记 <${note.title}> 创建成功`);
@@ -100,61 +102,65 @@ function _createNote({noteName, content, tagNames, parentNotebook}) {
       resolve(note);
     })
     .catch(err => {
-      console.log('err', 'hello');
+      // console.log('err', 'hello');
       reject(err);
     })
   })
 }
 
 // 按照单一原则模式，进行拆分
-async function uploadNote(title) {
-  let _result = _noteExists(title);
-  if(!_result) {
-    // 如果笔记不存在
-    console.log('请确认路径无误');
-    return;
-  }
-  const {notebookName, noteName} = _result;
-  // _result = null;
-  const db = config.getDb();
-  // 路径无误，检查文件是否存在
-  if (!fs.existsSync(path.join(notebookName, noteName))) {
-    // 如果不存在
-    console.log(`${notebookName}/${title} 不存在`);
-    return;
-  }
-  const {content, tagNames} = _getHtml({notebookName, noteName});
-  // 然后就可以新建笔记了
-  // 先判断笔记本是否已经在印象笔记中存在
-  let _notebook = db.get('notebooks').find({
-    name: notebookName
-  }).value();
+async function uploadNote(title, created = new Date().getTime()) {
+    console.log(title, created);
+    let _result = _noteExists(title);
+    if(!_result) {
+      // 如果笔记不存在
+      console.log('请确认路径无误');
+      // reject('请确认路径无误')
+    }
+    const {notebookName, noteName} = _result;
+    // _result = null;
+    const db = config.getDb();
+    // 路径无误，检查文件是否存在
+    if (!fs.existsSync(path.join(notebookName, noteName))) {
+      // 如果不存在
+      // reject(`${notebookName}/${title} 不存在`);
+      console.log(`${notebookName}/${title} 不存在`);
+    }
+    const {content, tagNames} = _getHtml({notebookName, noteName});
+    // 然后就可以新建笔记了
+    // 先判断笔记本是否已经在印象笔记中存在
+    let _notebook = db.get('notebooks').find({
+      name: notebookName
+    }).value();
 
-  // console.log(notebook);
-  if (!_notebook) {
-    // 如果是新笔记本，就要先创建笔记本
+    // console.log(_notebook);
+    if (!_notebook) {
+      console.log('笔记本不存在，创建')
+      // 如果是新笔记本，就要先创建笔记本
+      try {
+        let result = await _uploadNotebook(notebookName);
+        _notebook = result;
+        // console.log(notebookName, result, _notebook);
+        console.log(`笔记本 《${notebookName}》 创建成功`);
+      }catch(err) {
+        console.log(err);
+        // reject(err);
+      }
+    }
+    // console.log('开始创建笔记')
     try {
-      let result = await _uploadNotebook(notebookName);
-      _notebook = result;
-      // console.log(notebookName, result, _notebook);
-      console.log(`笔记本 《${notebookName}》 创建成功`);
+      let result = await _createNote({
+        noteName, 
+        content, 
+        tagNames, 
+        created,
+        parentNotebook: _notebook
+      });
+      // console.log(result, 'somsdfsdf?');
     }catch(err) {
       console.log(err);
+      // reject(err)
     }
-  }
-
-
-  try {
-    let result = await _createNote({
-      noteName, 
-      content, 
-      tagNames, 
-      parentNotebook: _notebook
-    });
-    updateDb();
-  }catch(err) {
-    console.log(err);
-  }
 
 }
 

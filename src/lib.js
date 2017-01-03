@@ -6,6 +6,8 @@ const MarkdownIt = require('markdown-it'),
   md = new MarkdownIt();
 
 const juice = require('juice');
+// 去除 class
+const declassify = require('declassify');
 
 module.exports = {
     getOption() {
@@ -117,6 +119,6 @@ module.exports = {
         // 插入行内样式
         let content = juice.inlineContent(html, style);
 
-        return content;
+        return declassify.process(content);
     }
 }

@@ -1,5 +1,6 @@
 import fs from 'fs';
 import path from 'path';
+import uploadNotebook from './uploadNotebook';
 import uploadNote from './uploadNote';
 
 
@@ -11,8 +12,6 @@ export default async function importNote(dir) {
     }catch(err) {
         console.log(err);
     }
-    // 这里获取到的都应该是文件夹，就直接按照文件夹来处理了
-    console.log(result);
     // 剔除掉回收站、草稿文件夹内的
     for(let i = 0, len = result.length; i < len; i++) {
         let notebook = result[i];
@@ -24,37 +23,25 @@ export default async function importNote(dir) {
         let notes = [];
         try {
             notes = fs.readdirSync(path.join(dir, notebook));
-
-            notes.forEach(async function (noteName) {
+            for(let j = 0, length = notes.length; j < length; j++) {
+                let noteName = notes[j];
                 let filepath = path.join(dir, notebook, noteName);
                 let noteContent = fs.readFileSync(filepath);
                 // 拿到笔记对象
                 let note = JSON.parse(noteContent);
-                // 现在可以创建笔记了
-                let content = note.content;
-                // 插入标签语法
-                let tagsText = createTags(note.tags);
-                if(tagsText) {
-                    content = tagsText + content;
-                }
                 let title = handleTitle(note.title);
-                // 标题、正文、标签、笔记本都有了，可以创建 md 文件了，创建文件后再修改笔记的创建时间
-                fs.writeFileSync(path.join(notebook, title), content, 'utf8');
-                // 修改 md 文件创建时间
-            })
+                // 同时上传至云端
+                // 先创建笔记本
+                let some = await uploadNote(`${notebook}/${title}`, note.createTime);
+                // console.log(some, 'hello');
+            }
+            // notes.forEach(async function (noteName) {
+            // })
         }catch(err) {
             console.log(err);
         }
     }
 }
-
-function createTags(tags) {
-    if(tags.length === 0) {
-        return false;
-    }
-    return '@[' + tags.join('|') + ']';
-}
-
 // 处理文件名
 function handleTitle(title) {
     // 文件名不能包含这些字符 \/：*？“<>|

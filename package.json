@@ -16,6 +16,7 @@
     "cheerio": "^0.22.0",
     "colors": "^1.1.2",
     "commander": "^2.9.0",
+    "declassify": "^1.0.1",
     "evernote": "^2.0.0-beta",
     "juice": "^4.0.2",
     "lowdb": "^0.14.0",

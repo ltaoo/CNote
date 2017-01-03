@@ -4,10 +4,15 @@ import Evernote from './Evernote';
 import init from './init';
 import clone from './clone';
 import pull from './pull';
+// 用于同步数据库
 import updateDb from './updateDb';
 import downloadDb from './downloadDb';
+// 导入笔记本
+import importNotebook from './importNotebook';
 // 导入笔记
 import importNote from './importNote';
+//
+import importNo from './import'
 
 // 获取执行命令的目录
 const sourceDir = process.cwd();
@@ -43,7 +48,13 @@ program
     .description('上传笔记到印象笔记')
     .action((path) => {
         //
-        Evernote.uploadNote(path);
+        Evernote.uploadNote(path)
+            .then(res => {
+                updateDb();
+            })
+            .catch(err => {
+                console.log(err);
+            })
     });
 
 
@@ -61,11 +72,25 @@ program.command('pull')
         pull();
     })
 
+// 从为知笔记导入笔记本
+program.command('importNotebook')
+    .description('导入笔记第一步、导入笔记本')
+    .action((dirname) => {
+        importNotebook(dirname);
+    })
 // 从为知笔记导入笔记
-program.command('import')
-    .description('导入 Json 格式的笔记')
+program.command('importNote')
+    .description('导入笔记第二步、导入 Json 格式的笔记')
     .action((dirname) => {
         importNote(dirname);
+    })
+// 从为知笔记导入笔记
+program.command('import')
+    .description('导入笔记第三步、上传笔记')
+    .action(async function (dirname) {
+        let result = await importNo(dirname);
+        // console.log('sdfsdf', result);
+        updateDb();
     })
 
 
